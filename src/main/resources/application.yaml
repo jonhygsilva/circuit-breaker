@@ -1,0 +1,38 @@
+#resilience4j:
+#  circuitbreaker:
+#    circuitBreakerAspectOrder: 1
+#    instances:
+#      booksRecommendationsCircuitBreaker:
+#        # analisa ate as ultimas 10 chamaas
+#        slidingWindowSize: 10
+#        # se 50% das ultimas 10 chamadas falharem, abre o circuito
+#        failureRateThreshold: 50
+#        # tempo que o circuito fica aberto antes de tentar fechar novamente
+#        waitDurationInOpenState: 10s
+#        # Tipo da janela: COUNT_BASED (padrão) ou TIME_BASED time based olha as ultimas chamadas nos ultimos 10 s por ex
+#        slidingWindowType: COUNT_BASED
+#        # numero de chamadas permitidas quando o circuito esta meio aberto
+#        permitted-number-of-calls-in-half-open-state: 3
+#
+#
+#  retry:
+#    retryAspectOrder: 2
+#    instances:
+#      booksRecommendationsRetry:
+#        maxAttempts: 3
+#        waitDuration: 1s
+##        ignoreExceptions:
+##          - com.example.circuit.breaker.example.exception.BookNotFoundException
+#
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: health,info,metrics,prometheus,circuitbreakers,retry
+#  endpoint:
+#    health:
+#      show-details: always
+#
+#logging:
+#  level:
+#    io.github.resilience4j.circuitbreaker: DEBUG
