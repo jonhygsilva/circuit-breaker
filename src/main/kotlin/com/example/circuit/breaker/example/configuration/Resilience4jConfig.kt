@@ -16,12 +16,12 @@ class Resilience4jConfig {
     @Bean
     fun bookCircuitBreaker(): CircuitBreaker {
         val config = CircuitBreakerConfig.custom()
-            .failureRateThreshold(50f)
-            .slidingWindowSize(10)
-            .minimumNumberOfCalls(5)
-            .waitDurationInOpenState(Duration.ofSeconds(10))
-            .permittedNumberOfCallsInHalfOpenState(3)
-            .recordException { e -> e is ServiceUnavailableException }
+            .failureRateThreshold(50f) //Sets error rate to open the circuit (50% failures).
+            .slidingWindowSize(10) //Analyzes the last X calls to decide if the circuit opens.
+            .minimumNumberOfCalls(5) //Sets minimum calls before the circuit starts evaluating.
+            .waitDurationInOpenState(Duration.ofSeconds(10)) //Sets how long the circuit stays OPEN.
+            .permittedNumberOfCallsInHalfOpenState(3) //Max calls allowed in Half-Open state.
+            .recordException { e -> e is ServiceUnavailableException } //Specifies which exceptions to record.
             .build()
 
         val circuitBreaker = CircuitBreaker.of("bookServiceCircuitBreaker", config)
@@ -39,12 +39,12 @@ class Resilience4jConfig {
         val intervalFn = IntervalFunction.ofExponentialBackoff(
             500,
             2.0
-        )
+        ) //Function with exponential backoff, setting wait time and multiplier.
 
         val config = RetryConfig.custom<Any>()
-            .maxAttempts(3)
-            .intervalFunction(intervalFn)
-            .retryExceptions(ServiceUnavailableException::class.java)
+            .maxAttempts(3) //Sets the maximum number of attempts (3 in example).
+            .intervalFunction(intervalFn) //Defines the wait interval between retries.
+            .retryExceptions(ServiceUnavailableException::class.java) //Specifies which exceptions trigger a retry.
             .build()
 
         val retry = Retry.of("bookServiceRetry", config)
